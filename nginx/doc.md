@@ -3,21 +3,15 @@
 ## nginx应用场景
 
 - 静态资源服务器
-
 - 反向代理服务
-
 - API接口服务
 
 ## nginx优势
 
 - 高并发、高性能
-
 - 可扩展性好
-
 - 高可靠性
-
 - 热部署
-
 - 开源许可证
 
 ## 学习环境
@@ -122,9 +116,7 @@ sendfile 零拷贝传输模式
 ### 版本分类
 
 - Mainline version 开发版
-
 - Stable version 稳定版
-
 - Legacy versions 历史版本
 
 ### 下载地址
@@ -358,9 +350,7 @@ PCRE库，需要指定-with-ld-opt="-L /usr/local/lib"
 ## 配置文件
 
 - /etc/nginx/nginx.conf #主配置文件
-
 - /etc/nginx/conf.d/*.conf #包含conf.d目录下面所有配置文件
-
 - /etc/nginx/conf.d/default.conf
 
 ### nginx配置语法

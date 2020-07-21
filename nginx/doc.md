@@ -691,7 +691,7 @@ Context: http,service,location
 location / {
   root   /usr/share/nginx/html;
   index  index.html  index.htm;
-  sub_filter  'world' 'zhufeng';
+  sub_filter  'world' 'zhangyanling';
   sub_filter_once  off;
 }
 ```

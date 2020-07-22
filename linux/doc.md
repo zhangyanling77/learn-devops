@@ -106,5 +106,33 @@ Memory test  内存检测
 
 19.选中Language，并选中右侧的Chinese Support，然后点击Optional packages
 
+20.调整后界面
 
+选中 第2、3和最后一个
 
+21.一个最精简的桌面环境就设置好了
+
+22.安装完成后重启
+
+23.重启之后License Information
+
+24.Create User
+
+Username：填写你的英文名（不带姓）
+Full Name：填写你的英文名·姓（首字母大写）
+
+25."Date and Time" 选中 "Synchronize data and time over the network"
+
+Finsh之后系统将重启
+
+26.第一次登录，登录前不要做任何更改！登录之后紧接着退出
+
+第二次登录，选择语言，在红色区域选择下拉小三角，选other，选中"汉语（中国）"，点击ok
+
+27.登录之后，请一定按照如下顺序点击
+
+勾选不再询问 → 保留旧名称
+
+至此，CentOS安装完成
+
+## Linux 云服务

@@ -519,3 +519,200 @@ mv mvtest mvtest2 # 将mvtest名称更名为 mvtest2
 ```
 
 ### Linux 文件内容查看
+
+命令 | 用途
+:-|:-
+cat | 由第一行开始显示文件内容
+tac | 从最后一行开始显示，可以看出tac是cat的倒着写
+nl | 显示的时候，输出行号
+more | 一页一页的显示文件内容
+less | 与more相似，但是相比more，它可以往前翻页
+head | 只看头几行
+tail | 只看尾几行
+
+1.cat
+
+```bash
+cat [-AbEnTv]
+```
+
+- -A：相当于-vET的整合选择，可列出一些特殊字符而不是空白而已
+- -b：列出行号，仅针对非空白行做行号显示，空白行不标行号
+- -E：将结尾的断行字节$显示出来
+- -n：列出行号，连同空白行也会有行号
+- -T：将【tab】按键以 ^| 显示出来
+- -v：列出一些看不出来的特殊字符
+
+```bash
+cat /etc/issue
+
+#
+CentOS release 6.4 (Final)
+Kernel \r on an \m
+```
+
+2.tac
+
+```bash
+tac /etc/issue
+
+#
+Kernel \r on an \m
+CentOS release 6.4 (Final)
+```
+
+3.nl
+
+```bash
+nl [-bnw]
+```
+
+- -b： 指定行号指定的方式，主要有两种。
+
+  -b a：表示不论是否为空行，也同样列出行号（类似cat -n）
+  
+  -b t：如果有空行，空的那一行不要列出行号（默认）
+
+- -n：列出行号表示的方法
+
+  -n ln：行号在荧幕的最左方显示
+
+  -n rn：行号在自己栏位的最右方显示，且不加0
+
+  -n rz：行号在自己栏位的最右方显示，且加0
+
+- -w：行号栏位的占用位数
+
+```bash
+nl /etc/issue
+
+#
+1  CentOS release 6.4 (Final)
+2  Kernel \r on an \m
+```
+
+4.more
+
+一页一页翻动
+
+```bash
+more /etc/man_db.config
+
+#
+# Generated automatically from man.conf.in by the
+# configure script.
+#
+# man.conf from man-1.6d
+....(中间省略)....
+--More--(28%)  <== 重点在这一行 你的光标也会在这里等待你的命令
+```
+
+- 空白键 (space)：代表向下翻一页
+- Enter：代表向下翻『一行』
+- /字串：代表在这个显示的内容当中，向下搜寻『字串』这个关键字
+- :f：立刻显示出档名以及目前显示的行数
+- q：代表立刻离开 more ，不再显示该文件内容
+- b 或 [ctrl]-b：代表往回翻页，不过这动作只对文件有用，对管线无用
+
+5.less
+
+```bash
+less /etc/man.config
+
+#
+# Generated automatically from man.conf.in by the
+# configure script.
+#
+# man.conf from man-1.6d
+....(中间省略)....
+:   <== 这里可以等待你输入命令
+```
+
+- 空白键：向下翻动一页
+- [pagedown]：向下翻动一页
+- [pageup]：向上翻动一页
+- /字串：向下搜寻『字串』的功能
+- ?字串：向上搜寻『字串』的功能
+- n：重复前一个搜寻 (与 / 或 ? 有关)
+- N：反向的重复前一个搜寻 (与 / 或 ? 有关)
+- q：离开 less 这个程序
+
+6.head
+
+```bash
+head [-n number] 文件名
+```
+
+- -n：后面接数字，代表显示几行的意思。默认的情况中，显示前面10行
+
+```bash
+head /etc/man.config
+
+head -n 20 /etc/man.config # 显示前20行
+```
+
+7.tail
+
+```bash
+tail [-n number] 文件名
+```
+
+- -n：后面接数字，代表显示几行的意思。 默认的情况中，显示最后的10行
+- -f：表示持续侦测后面所接的档名，要等到按下[ctrl]-c才会结束tail的侦测
+
+```bash
+tail /etc/man.config
+
+tail -n 20 /etc/man.config # 显示最后20行
+```
+
+## Linux 链接概念
+
+Linux 链接分两种，一种被称为硬链接（Hard Link），另一种被称为符号链接（Symbolic Link）。默认情况下，ln 命令产生硬链接。
+
+### 硬链接
+
+硬链接指通过索引节点来进行连接。
+
+在Linux的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点（node Index）。
+
+在Liunx中，多个文件名指向同一索引节点是存在的。比如，f1是f2的硬链接，则f1的目录项中的inode节点号与f2的目录项中的inode节点号相同，即一个inode节点对应两个不同的文件名，两个文件名指向同一个文件，f1和f2对文件系统来说是完全平等。伤处其中任何一个都不会影响另一个的访问。
+
+硬链接的作用是允许一个文件拥有多个有效路径，这样用户就可以建议硬链接到重要文件，以防误删。文件真正被删除的条件是与之相关的所有硬链接文件均被删除。
+
+### 软链接
+
+软链接又叫“符号链接（Symbol link）”。软链接文件类似于Windows的快捷方式文件。
+
+它实际上是一个特殊的文件。在符号连接中，文件实际上是一个文本文件，其中包含的另一个文件的位置信息。比如，f1是f2的软链接，f1的目录项中的inode节点号与f2的目录项中的inode节点号不同，f1和f2指向的是两个不同的inode，继而指向两块不同的数据块。但f1的数据块中存放的只是f2的路径名（可以根据这个找到f2的目录项）。f1和f2之间是“主从”关系，如果f2被删除了，那么f1依然存在（因为两个是不同的文件），但指向的是一个无效的链接。
+
+```bash
+touch f1  # 创建一个文件f1
+ln f1 f2  # 创建f1的一个硬链接文件f2
+ln -s f1 f3  # 创建f1的一个软链接文件f3
+ls -li  # -i参数显示文件的inode节点信息
+
+total 0
+9797648 -rw-r--r--  2 oracle oinstall 0 Apr 21 08:11 f1
+9797648 -rw-r--r--  2 oracle oinstall 0 Apr 21 08:11 f2
+9797649 lrwxrwxrwx  1 oracle oinstall 2 Apr 21 08:11 f3 -> f1
+```
+
+可以看出f2与原文件f1的inode相同，而f3的inode则与f1不同。
+
+```bash
+echo "f1" >> f1
+cat f1
+# "f1"
+cat f2
+# "f1"
+cat f3
+# "f1"
+rm -f f1
+cat f2
+# "f1"
+cat f3
+# cat: f3: No such file or directory
+```
+
+可以看出，当删除原文件f1后，硬链接文件f2不受影响，但软链接f3文件无效了。

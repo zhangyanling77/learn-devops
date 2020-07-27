@@ -1383,3 +1383,33 @@ umount [-fn] 装置文件名或挂载点
 ```bash
 umount /dev/hdc6 # 卸载/dev/hdc6
 ```
+
+## Linux yum 命令
+
+yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，基于RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。
+
+语法：
+
+```bash
+yum [options] [command] [package ...]
+```
+
+- options：可选，选项包括-h（帮助），-y（当安装过程提示选择全部为"yes"）， - q（不显示安装的过程）等等。
+- command：要进行的操作
+- package：操作的对象
+
+### yum常用命令
+
+命令 | 用途
+:-|:-
+yum check-update | 列出所有可更新的软件清单命令
+yum update | 更新所有软件命令
+`yum install <package_name>` | 仅安装指定的软件命令
+`yum update <package_name>` | 仅更新指定的软件命令
+yum list | 列出所有可安裝的软件清单命令
+`yum remove <package_name>` | 删除软件包命令
+`yum search <keyword>` | 查找软件包命令
+yum clean packages | 清除缓存目录下的软件包
+yum clean headers | 清除缓存目录下的 headers
+yum clean oldheaders | 清除缓存目录下旧的 headers
+yum clean, yum clean all (= yum clean packages; yum clean oldheaders) | 清除缓存目录下的软件包及旧的headers

@@ -589,3 +589,274 @@ abc != efg : a 不等于 b
 -n abc : 字符串长度不为 0
 abc : 字符串不为空
 ```
+
+### 文件测试运算符
+
+文件测试运算符用于检测 Unix 文件的各种属性。
+
+操作符 | 说明 | 示例
+:-|:-|:-
+-b file | 检测文件是否是块设备文件，如果是，则返回 true | [ -b $file ] 返回 false
+-c file | 检测文件是否是字符设备文件，如果是，则返回true | [ -c $file ] 返回 false
+-d file | 检测文件是否是目录，如果是，则返回 true | [ -d $file ] 返回 false
+-f file | 检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回 true | [ -f $file ] 返回 true
+-g file | 检测文件是否设置了 SGID 位，如果是，则返回 true | [ -g $file ] 返回 false
+-k file | 检测文件是否设置了粘着位(Sticky Bit)，如果是，则返回 true | [ -k $file ] 返回 false
+-p file | 检测文件是否是有名管道，如果是，则返回 true | [ -p $file ] 返回 false
+-u file | 检测文件是否设置了 SUID 位，如果是，则返回 true | [ -u $file ] 返回 false
+-r file | 检测文件是否可读，如果是，则返回 true | [ -r $file ] 返回 true
+-w file | 检测文件是否可写，如果是，则返回 true | [ -w $file ] 返回 true
+-x file | 检测文件是否可执行，如果是，则返回 true | [ -x $file ] 返回 true
+-s file | 检测文件是否为空（文件大小是否大于0），不为空返回 true | [ -s $file ] 返回 true
+-e file | 检测文件（包括目录）是否存在，如果是，则返回 true | [ -e $file ] 返回 true
+-S file | 判断某文件是否 socket | -
+-L file | 检测文件是否存在并且是一个符号链接 | -
+
+```bash
+#!bin/bash
+file="/var/www/zhangyanling/hello.sh"
+
+if [ -r $file ]
+then
+   echo "文件可读"
+else
+   echo "文件不可读"
+fi
+if [ -w $file ]
+then
+   echo "文件可写"
+else
+   echo "文件不可写"
+fi
+if [ -x $file ]
+then
+   echo "文件可执行"
+else
+   echo "文件不可执行"
+fi
+if [ -f $file ]
+then
+   echo "文件为普通文件"
+else
+   echo "文件为特殊文件"
+fi
+if [ -d $file ]
+then
+   echo "文件是个目录"
+else
+   echo "文件不是个目录"
+fi
+if [ -s $file ]
+then
+   echo "文件不为空"
+else
+   echo "文件为空"
+fi
+if [ -e $file ]
+then
+   echo "文件存在"
+else
+   echo "文件不存在"
+fi
+
+## 输出 ##
+文件可读
+文件可写
+文件可执行
+文件为普通文件
+文件不是个目录
+文件不为空
+文件存在
+```
+
+## Shell echo命令
+
+echo命令用于字符串输出。可以使用echo实现更复杂的输出格式控制。
+
+```bash
+echo 字符串
+```
+
+### 显示普通字符串
+
+```bash
+echo "My name is zhangyanling" # 双引号可以省略
+或
+echo My name is zhangyanling
+
+## 输出 ##
+My name is zhangyanling
+```
+
+### 显示转义字符
+
+```bash
+echo "\"My name is zhangyanling\""
+
+## 输出 ##
+"My name is zhangyanling"
+```
+
+### 显示变量
+
+read 命令从标准输入中读取一行,并把输入行的每个字段的值指定给 shell 变量。
+
+```bash
+#!/bin/bash
+read my_name
+echo "$name is a girl"
+
+## 输出 ##
+$ ./hello.sh # 回车后输入下面这个
+zhangyanling # 标准输入
+zhangyanling is a girl # 输出
+```
+
+### 显示换行
+
+```bash
+#!/bin/bash
+echo -e "Hello! \n" # -e 开启转义 \n 换行
+echo "My name is zhangyanling"
+
+## 输出 ##
+Hello!
+
+My name is zhangyanling
+```
+
+### 显示不换行
+
+```bash
+#!/bin/bash
+echo -e "Hello! \c" # -e 开启转义 \c 不换行
+echo "My name is zhangyanling"
+
+## 输出 ##
+Hello! My name is zhangyanling
+```
+
+### 显示结果定向至文件
+
+```bash
+#!/bin/bash
+echo "My name is zhangyanling" > file1
+```
+
+### 原样输出字符串，不进行转义或取变量(用单引号)
+
+```bash
+#!/bin/bash
+echo '$my_name\"'
+
+## 输出 ##
+$my_name\"
+```
+
+### 显示命令执行结果
+
+```bash
+echo `date` # 结果将显示当前日期 （注意： 这里使用的是反引号 `, 而不是单引号 '）
+
+## 输出 ##
+2020年07月28日 16:02:06
+```
+
+## Shell printf 命令
+
+printf 由 POSIX 标准所定义，因此使用 printf 的脚本比使用 echo 移植性好。printf 使用引用文本或空格分隔的参数，外面可以在 printf 中使用格式化字符串，还可以制定字符串的宽度、左右对齐方式等。默认 printf 不会像 echo 自动添加换行符，可以手动添加 \n。
+
+```bash
+printf format-string [arguments...]
+```
+
+- format-string：格式控制字符串
+- arguments：参数列表
+
+```bash
+echo "Hello, Shell"
+# 等价于
+printf "Hello, Shell\n"
+```
+
+示例：
+
+```bash
+#!/bin/bash
+
+# %s %c %d %f都是格式替代符
+# %-10s 指一个宽度为10个字符（-表示左对齐，没有则表示右对齐），任何字符都会被显示在10个字符宽的字符内，如果不足则自动以空格填充，超过也会将内容全部显示出来
+# %-4.2f 指格式化为小数，其中.2指保留2位小数
+printf "%-10s %-8s %-4s\n" 姓名 性别 体重kg  
+printf "%-10s %-8s %-4.2f\n" 郭靖 男 66.1234 
+printf "%-10s %-8s %-4.2f\n" 杨过 男 48.6543 
+printf "%-10s %-8s %-4.2f\n" 郭芙 女 47.9876
+
+## 输出 ##
+姓名     性别   体重kg
+郭靖     男      66.12
+杨过     男      48.65
+郭芙     女      47.99
+
+#---------- 其他示例 ----------
+# format-string为双引号
+printf "%d %s\n" 1 "abc"
+
+# 单引号与双引号效果一样 
+printf '%d %s\n' 1 "abc" 
+
+# 没有引号也可以输出
+printf %s abcdef
+
+# 格式只指定了一个参数，但多出的参数仍然会按照该格式输出，format-string 被重用
+printf %s abc def
+
+printf "%s\n" abc def
+
+printf "%s %s %s\n" a b c d e f g h i j
+
+# 如果没有 arguments，那么 %s 用NULL代替，%d 用 0 代替
+printf "%s and %d \n"
+
+## 输出 ##
+1 abc
+1 abc
+abcdefabcdefabc
+def
+a b c
+d e f
+g h i
+j
+ and 0
+```
+
+### printf的转义序列
+
+序列 | 说明
+:-|:-
+`\a` | 警告字符，通常为ASCII的BEL字符
+`\b` | 后退
+`\c` | 抑制（不显示）输出结果中任何结尾的换行字符（只在%b格式指示符控制下的参数字符串中有效），而且，任何留在参数里的字符、任何接下来的参数以及任何留在格式字符串中的字符，都被忽略
+`\f` | 换页（formfeed）
+`\n`| 换行
+`\r` | 回车（Carriage return）
+`\t` | 水平制表符
+`\v` | 垂直制表符
+`\\` | 一个字面上的反斜杠字符
+`\ddd` | 表示1到3位数八进制值的字符。仅在格式字符串中有效
+`\0ddd` | 表示1到3位的八进制值字符
+
+```bash
+#!/bin/bash
+printf "a string, no processing:<%s>\n" "A\nB"
+
+printf "a string, no processing:<%b>\n" "A\nB"
+
+printf "www.zhangyanling77.com \a"
+
+## 输出 ##
+a string, no processing:<A\nB>
+a string, no processing:<A
+B>
+www.zhangyanling77.com # 不换行
+```

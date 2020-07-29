@@ -508,7 +508,7 @@ fi
 运算符 | 说明 | 示例
 :-|:-|:-
 `&&` | 逻辑的 AND | [[ $a -lt 100 && $b -gt 100 ]] 返回 false
- '||' | 逻辑的 OR | [[ $a -lt 100 '||' $b -gt 100 ]] 返回 true
+`||` | 逻辑的 OR | [[ $a -lt 100 `||` $b -gt 100 ]] 返回 true
 
 ```bash
 #!/bin/bash
@@ -1115,8 +1115,8 @@ esac
 ```bash
 echo '输入1到3之间的数字'
 echo '你输入的数字是：'
-read aNum
-case $aNum in
+read num
+case $num in
    1) echo '你选择了 1'
    ;;
    2) echo '你选择了 2'
@@ -1146,9 +1146,9 @@ break命令允许跳出所有循环（终止执行后面的所有循环）。
 while :
 do
    echo -n "输入 1 到 5 之间的数字:"
-   read aNum
-   case $aNum in
-      1|2|3|4|5) echo "你输入的数字为 $aNum!"
+   read num
+   case $num in
+      1|2|3|4|5) echo "你输入的数字为 $num!"
       ;;
       *) echo "你输入的数字不是 1 到 5 之间的! 游戏结束"
          break
@@ -1171,9 +1171,9 @@ continue命令它不会跳出所有循环，仅仅跳出当前循环。
 while :
 do
    echo -n "输入1 到 5之间的数字："
-   read aNum
-   case $aNum in
-      1|2|3|4|5) echo "你输入的数字为 $aNum!"
+   read num
+   case $num in
+      1|2|3|4|5) echo "你输入的数字为 $num!"
       ;;
       *) echo "你输入的数字不是 1 到 5 之间的!"
          continue
@@ -1187,4 +1187,251 @@ done
 输入1 到 5之间的数字8
 你输入的数字不是 1 到 5 之间的!
 输入1 到 5之间的数字：
+```
+
+## Shell 函数
+
+linux shell 可以用户定义函数，然后在shell脚本中可以随便调用。
+
+```bash
+[ function ] funName [()]
+
+{
+   action;
+
+   [return int;]
+}
+```
+
+- 可以带function fun()定义，也可以直接fun()定义，不带任何参数
+- 参数返回，可以显式加return返回，如果不加，将以最后一条命令运行结果，作为返回值。return后跟数值n（0-255）。
+
+```bash
+#!/bin/bash
+
+# 1 函数
+aFun() {
+   echo "这是一个shell函数"
+}
+echo "-----函数开始执行-----"
+aFun
+echo "-----函数执行结束-----"
+
+## 输出 ##
+-----函数开始执行-----
+这是一个shell函数
+-----函数执行结束-----
+
+# 2 带返回值
+funWithReturn() {
+   echo "该函数将对输入的两个数组做相加运算"
+   echo "输入第一个数字："
+   read num1
+   echo "输入第二个数字："
+   read num2
+   echo "两个数字分别为 $num1 和 $num2 "
+   return $(($num1+$num2))
+}
+funWithReturn
+echo "输入的两个数字之和为：$? " # 函数返回值在调用该函数后通过 $? 来获得
+
+## 输出 ##
+该函数将对输入的两个数组做相加运算
+输入第一个数字：
+12
+输入第二个数字：
+5
+两个数字分别为 12 和 5
+输入的两个数字之和为：17
+```
+> 注意：所有函数在使用前必须定义。如果将函数放在脚本开始部分，直至shell解释器首次发现它时，才可以使用。调用函数仅使用其函数名即可。
+
+### 函数参数
+
+调用函数时，可以向其传递参数。在函数体内部，通过`$n`的形式来获取参数的值。例如，$1 表示第一个参数，$2 表示第二个参数……
+
+```bash
+#!/bin/bash
+
+funWithParam() {
+   echo "第一个参数为 $1 "
+   echo "第二个参数为 $2 "
+   echo "第十个参数为 $10 "
+   echo "第十个参数为 ${10} "
+   echo "参数总个数有 $# 个 "
+   echo "作为一个字符串输出所有参数 $* "
+}
+funWithParam 1 2 3 4 5 6 7 8 9 34 76
+
+## 输出 ##
+第一个参数为 1
+第二个参数为 2
+第十个参数为 10
+第十个参数为 34
+参数总个数有 11 个
+作为一个字符串输出所有参数 1 2 3 4 5 6 7 8 9 34 76
+```
+
+当n>=10时，需要使用${n}来获取参数。
+
+## Shell 输入/输出重定向
+
+一个命令通常从一个叫标准输入的地方读取输入，默认情况下，这恰好是你的终端。同样，一个命令通常将其输出写入到标准输出，默认情况下也是你的终端。
+
+命令 | 说明
+:-|:-
+command > file | 将输出重定向到 file
+command < file | 将输入重定向到 file
+command >> file | 将输出以追加的方式重定向到 file
+n > file | 将文件描述符为n的文件重定向到 file
+n >> file | 将文件描述符为n的文件以追加的方式重定向到 file
+n >& m | 将输出文件m和n合并
+n <& m | 将输入文件m和n合并
+<< tag | 将开始标记tag和结束标记tag之间的内容作为输入
+
+> 注意：文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）。
+
+### 输出重定向
+
+重定向一般通过在命令间插入特定的符号来实现。输出重定向会覆盖文件内容，如果不希望文件内容被覆盖，可以使用 `>>` 追加到文件末尾。
+
+```bash
+# 执行command1然后将输出的内容存入file1
+command1 > file1
+```
+> 注意：任何file1内的已经存在的内容将被新内容替代。如果要将新内容添加在文件末尾，请使用>>操作符。
+
+### 输入重定向
+
+可以从文件获取输入，这样，本来需要从键盘获取输入的命令会转移到文件读取内容。
+
+```bash
+# 执行command1，读取file1的内容，然后输出结果
+command1 < file1 
+
+# 同时替换输入和输出，执行command1，从文件infile读取内容，然后将输出写入到outfile中
+command1 < infile > outfile
+```
+
+例如，
+
+```bash
+touch test.txt
+echo "this is a girl" > test.txt
+cat test.txt
+# this is a girl
+touch test2.txt
+# 统计test.txt文件的行数，然后将结果写入到test2.txt中
+wc -l < test.txt > test2.txt
+cat test2.txt
+# 1
+```
+
+### 其他
+
+一般情况下，每个 Unix/Linux 命令运行时都会打开三个文件：
+
+- 标准输入文件（stdin）：stdin的文件描述符为0，Unix程序默认从stdin读取数据
+- 标准输出文件（stdout）：stdout的文件描述符为1，Unix程序默认向stdout输出数据
+- 标准错误文件（stderr）：stderr的文件描述符为2，Unix程序会向stderr流中写入错误信息
+
+默认情况下，`command > file` 将 stdout 重定向到 file，`command < file` 将stdin 重定向到 file。2 表示标准错误文件(stderr)。
+
+1.如果希望 stderr 重定向到 file，可以这样写：
+
+```bash
+command 2 > file
+```
+
+2.如果希望 stderr 追加到 file 文件末尾，可以这样写：
+
+```bash
+command 2 >> file
+```
+
+3.如果希望将 stdout 和 stderr 合并后重定向到 file，可以这样写：
+
+```bash
+command > file 2>&1
+或者
+command >> file 2>&1
+```
+
+4.如果希望对 stdin 和 stdout 都重定向，可以这样写：
+
+```bash
+# command 命令将 stdin 重定向到 file1，将 stdout 重定向到 file2
+command < file1 > file2
+```
+
+### Here Document
+
+Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序。
+
+```bash
+# 将两个 delimiter 之间的内容(document) 作为输入传递给 command
+command << delimiter
+   document
+delimiter
+```
+
+> 注意：1.结尾的delimiter 一定要顶格写，前面不能有任何字符，后面也不能有任何字符，包括空格和 tab 缩进 2.开始的delimiter前后的空格会被忽略掉
+
+在命令行中通过 wc -l 命令计算 Here Document 的行数：
+
+```bash
+wc -l << EOF
+    欢迎来到
+    一江西流的网站
+    www.zhangyanling77.com
+EOF
+
+## 输出 ##
+3
+```
+
+### /dev/null 文件
+
+如果希望执行某个命令，但又不希望在屏幕上显示输出结果，那么可以将输出重定向到 `/dev/null`。
+
+```bash
+command > /dev/null
+```
+
+`/dev/null` 是一个特殊的文件，写入到它的内容都会被丢弃；如果尝试从该文件读取内容，那么什么也读不到。
+
+## Shell 文件包含
+
+Shell也可以包含外部脚本。这样可以很方便的封装一些公用的代码作为一个独立的文件。
+
+```bash
+. filename # 注意点号（.）和文件名间有一个空格
+或
+source filename
+```
+
+### 实例
+
+创建test1.sh如下：
+
+```bash
+#!/bin/bash
+
+url="http://www.zhangyanling77.com"
+```
+
+创建test2.sh如下：
+
+```bash
+#!/bin/bash
+
+# 使用 . 来引用test1.sh
+. ./test1.sh
+# 或使用以下包含文件代码
+# source ./test1.sh
+
+echo "一江西流的网站地址：$url"
+
+# 执行 ./test2.sh，输出：
+一江西流的网站地址：http://www.zhangyanling77.com
 ```

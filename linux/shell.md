@@ -860,3 +860,331 @@ a string, no processing:<A
 B>
 www.zhangyanling77.com # 不换行
 ```
+
+## Shell test 命令
+
+test命令用于检查某个条件是否成立，它可以进行数值、字符和文件三个方面的测试。
+
+### 数值测试
+
+参数 | 说明
+:-|:-
+-eq | 等于则为真
+-ne | 不等于则为真
+-gt | 大于则为真
+-ge | 大于等于则为真
+-lt | 小于则为真
+-le | 小于等于则为真
+
+```bash
+num1=100
+num2=100
+
+if test $[num1] -eq $[num2]
+then
+   echo '两数相等'
+else
+   echo '两数不等'
+fi
+
+## 输出 ##
+两数相等
+```
+
+代码中的 [] 执行基本的算数运算，如：
+
+```bash
+#!/bin/bash
+a=5
+b=6
+
+result=$[a+b] # 注意等号两边不能有空格
+echo "result 为： $result"
+
+## 输出 ##
+result 为： 11
+```
+
+### 字符串测试
+
+参数 | 说明
+:-|:-
+= | 相等则为真
+!= | 不相等则为真
+-z 字符串 | 字符串的长度为0则为真
+-n 字符串 | 字符串的长度不为0则为真
+
+```bash
+str1="zhangyanling"
+str2="zhangyanqiu"
+
+if test $str1 = $str2
+then
+   echo '两个字符串相等'
+else
+   echo '两个字符串不相等'
+fi
+
+## 输出 ##
+两个字符串不相等
+```
+
+### 文件测试
+
+参数 | 说明
+:-|:-
+-e 文件名 | 如果文件存在则为真
+-r 文件名 | 如果文件存在且可读则为真
+-w 文件名 | 如果文件存在且可写则为真
+-x 文件名 | 如果文件存在且可执行则为真
+-s 文件名 | 如果文件存在且至少有一个字符则为真
+-d 文件名 | 如果文件存在且为目录则为真
+-f 文件名 | 如果文件存在且为普通文件则为真
+-c 文件名 | 如果文件存在且为字符型特殊文件则为真
+-b 文件名 | 如果文件存在且为特殊文件则为真
+
+```bash
+cd /bin
+if test -e ./bash
+then
+    echo '文件已存在!'
+else
+    echo '文件不存在!'
+fi
+
+## 输出 ##
+文件已存在!
+```
+
+另外，Shell还提供了与( -a )、或( -o )、非( ! )三个逻辑操作符用于将测试条件连接起来，其优先级为："!"最高，"-a"次之，"-o"最低。
+
+## Shell 流程控制
+
+sh的流程控制不可为空，如果else分支没有语句执行，就不要写这个else。
+
+### if else
+
+```bash
+# 1 if
+if condition
+then
+    command1 
+    command2
+    ...
+    commandN 
+fi
+# 2 if else
+if condition
+then
+    command1 
+    command2
+    ...
+    commandN
+else
+    command
+fi
+# 3 if else-if else
+if condition1
+then
+    command1
+elif condition2 
+then 
+    command2
+else
+    commandN
+fi
+```
+
+### for 循环
+
+in列表可以包含替换、字符串和文件名。in列表是可选的，如果不用它，for循环使用命令行的位置参数。
+
+```bash
+# 1 for
+for var in item1 item2 ... itemN
+do
+    command1
+    command2
+    ...
+    commandN
+done
+# 2 无限循环
+for (( ; ; ))
+```
+
+```bash
+for loop in 1 2 3
+do
+    echo "The value is: $loop"
+done
+
+## 输出 ##
+The value is: 1
+The value is: 2
+The value is: 3
+```
+
+### while 语句
+
+while循环用于不断执行一系列命令，也用于从输入文件中读取数据；命令通常为测试条件。
+
+```bash
+# 1 while
+while condition
+do
+    command
+done
+
+# 2 无限循环
+while :
+do
+    command
+done
+或
+while true
+do
+    command
+done
+```
+
+```bash
+#!/bin/bash
+num=1
+while(( $num<=3 ))
+do
+    echo $num
+    let "num++" # let 命令，它用于执行一个或多个表达式，变量计算中不需要加上 $ 来表示变量
+done
+
+## 输出 ##
+1
+2
+3
+```
+
+### until 循环
+
+until 循环执行一系列命令直至条件为 true 时停止。与 while 循环在处理方式上刚好相反。一般 while 循环优于 until 循环，但在某些时候—也只是极少数情况下，until 循环更加有用。
+
+```bash
+# condition 一般为条件表达式，如果返回值为 false，则继续执行循环体内的语句，否则跳出循环。
+until condition
+do
+    command
+done
+```
+
+```bash
+a=0
+
+until [ ! $a -lt 3 ]
+do
+   echo $a
+   a=`expr $a + 1`
+done
+
+## 输出 ##
+0
+1
+2
+```
+
+### case
+
+case语句为多选择语句。可以用case语句匹配一个值与一个模式，如果匹配成功，执行相匹配的命令。
+
+```bash
+case 值 in
+模式1)
+    command1
+    command2
+    ...
+    commandN
+    ;;
+模式2)
+    command1
+    command2
+    ...
+    commandN
+    ;;
+esac
+```
+
+取值后面必须为单词in，每一模式必须以右括号结束。取值可以为变量或常数。匹配发现取值符合某一模式后，其间所有命令开始执行直至 ;;。取值将检测匹配的每一个模式。一旦模式匹配，则执行完匹配模式相应命令后不再继续其他模式。如果无一匹配模式，使用星号 * 捕获该值，再执行后面的命令。
+
+```bash
+echo '输入1到3之间的数字'
+echo '你输入的数字是：'
+read aNum
+case $aNum in
+   1) echo '你选择了 1'
+   ;;
+   2) echo '你选择了 2'
+   ;;
+   3) echo '你选择了 3'
+   ;;
+   *) echo '你没有输入 1 到 3 之间的数字'
+   ;;
+esac
+
+## 输出 ##
+输入1到3之间的数字
+你输入的数字是：
+2
+你选择了 2
+```
+
+### 跳出循环
+
+Shell使用两个命令来实现该功能：break和continue。
+
+1.break命令
+
+break命令允许跳出所有循环（终止执行后面的所有循环）。
+
+```bash
+while :
+do
+   echo -n "输入 1 到 5 之间的数字:"
+   read aNum
+   case $aNum in
+      1|2|3|4|5) echo "你输入的数字为 $aNum!"
+      ;;
+      *) echo "你输入的数字不是 1 到 5 之间的! 游戏结束"
+         break
+      ;;
+   esac
+done
+
+## 输出 ##
+输入 1 到 5 之间的数字:3
+你输入的数字为 3!
+输入 1 到 5 之间的数字:6
+你输入的数字不是 1 到 5 之间的! 游戏结束
+```
+
+2.continue
+
+continue命令它不会跳出所有循环，仅仅跳出当前循环。
+
+```bash
+while :
+do
+   echo -n "输入1 到 5之间的数字："
+   read aNum
+   case $aNum in
+      1|2|3|4|5) echo "你输入的数字为 $aNum!"
+      ;;
+      *) echo "你输入的数字不是 1 到 5 之间的!"
+         continue
+         echo "游戏结束"
+   esac
+done
+
+## 输出 ##
+输入1 到 5之间的数字：3
+你输入的数字为 3!
+输入1 到 5之间的数字8
+你输入的数字不是 1 到 5 之间的!
+输入1 到 5之间的数字：
+```

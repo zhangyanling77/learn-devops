@@ -319,8 +319,103 @@
 # 如果没有 arguments，那么 %s 用NULL代替，%d 用 0 代替
 # printf "%s and %d \n"
 
-printf "a string, no processing:<%s>\n" "A\nB"
+# printf "a string, no processing:<%s>\n" "A\nB"
 
-printf "a string, no processing:<%b>\n" "A\nB"
+# printf "a string, no processing:<%b>\n" "A\nB"
 
-printf "www.zhangyanling77.com \a"
+# printf "www.zhangyanling77.com \a"
+
+# num1=100
+# num2=100
+
+# if test $[num1] -eq $[num2]
+# then
+#    echo '两数相等'
+# else
+#    echo '两数不等'
+# fi
+
+# a=5
+# b=6
+
+# result=$[a+b] # 注意等号两边不能有空格
+# echo "result 为： $result"
+
+# a=0
+
+# until [ ! $a -lt 3 ]
+# do
+#    echo $a
+#    a=`expr $a + 1`
+# done
+
+# echo '输入1到4之间的数字'
+# echo '你输入的数字是：'
+# read aNum
+# case $aNum in
+#    1) echo '你选择了 1'
+#    ;;
+#    2) echo '你选择了 2'
+#    ;;
+#    3) echo '你选择了 3'
+#    ;;
+#    4) echo '你选择了 4'
+#    ;;
+#    *) echo '你没有输入 1 到 4 之间的数字'
+#    ;;
+# esac
+
+# while :
+# do
+#    echo -n "输入 1 到 5 之间的数字:"
+#    read aNum
+#    case $aNum in
+#       1|2|3|4|5) echo "你输入的数字为 $aNum!"
+#       ;;
+#       *) echo "你输入的数字不是 1 到 5 之间的! 游戏结束"
+#          break
+#       ;;
+#    esac
+# done
+
+# while :
+# do
+#    echo -n "输入1 到 5之间的数字："
+#    read aNum
+#    case $aNum in
+#       1|2|3|4|5) echo "你输入的数字为 $aNum!"
+#       ;;
+#       *) echo "你输入的数字不是 1 到 5 之间的!"
+#          continue
+#          echo "游戏结束"
+#    esac
+# done
+
+# demoFun() {
+#   echo "这是一个shell函数"
+# }
+# echo "-----函数开始执行-----"
+# demoFun
+# echo "-----函数执行结束-----"
+
+# funWithReturn() {
+#    echo "该函数将对输入的两个数组做相加运算"
+#    echo "输入第一个数字："
+#    read num1
+#    echo "输入第二个数字："
+#    read num2
+#    echo "两个数字分别为 $num1 和 $num2 "
+#    return $(($num1+$num2))
+# }
+# funWithReturn
+# echo "输入的两个数字之和为：$? "
+
+funWithParam() {
+   echo "第一个参数为 $1 "
+   echo "第二个参数为 $2 "
+   echo "第十个参数为 $10 "
+   echo "第十个参数为 ${10} "
+   echo "参数总个数有 $# 个 "
+   echo "作为一个字符串输出所有参数 $* "
+}
+funWithParam 1 2 3 4 5 6 7 8 9 34 76
